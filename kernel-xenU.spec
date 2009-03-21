@@ -13,7 +13,7 @@
 %define		have_isa	1
 
 %define		_basever		2.6.27
-%define		_postver		.19
+%define		_postver		.20
 %define		_rel			1
 
 %define		_enable_debug_packages			0
