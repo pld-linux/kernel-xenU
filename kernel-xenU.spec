@@ -41,7 +41,7 @@ Source0:	http://www.kernel.org/pub/linux/kernel/v2.6/linux-%{_basever}.tar.bz2
 # Source0-md5:	b3e78977aa79d3754cb7f8143d7ddabd
 %if "%{_postver}" != "%{nil}"
 Source1:	http://www.kernel.org/pub/linux/kernel/v2.6/patch-%{version}.bz2
-# Source1-md5:	c4745906f759fcf5e3510ebff5246e9a
+# Source1-md5:	3edf81af0b4a48fc3a7c27101d11d67f
 %endif
 
 Source2:	kernel-xenU-autoconf.h
