@@ -1,7 +1,7 @@
 #
 # Conditional build:
 %bcond_without	source		# don't build kernel-xenU-source package
-%bcond_without	pcmcia		# don't build pcmcia
+%bcond_with	pcmcia		# build pcmcia
 %bcond_with	verbose		# verbose build (V=1)
 %bcond_with	pae		# build PAE (HIGHMEM64G) support on uniprocessor
 
