@@ -638,6 +638,7 @@ fi
 %exclude %{_kernelsrcdir}/scripts/setlocalversion
 %exclude %{_kernelsrcdir}/scripts/*.c
 %exclude %{_kernelsrcdir}/scripts/*.sh
+%{_kernelsrcdir}/sound
 %{_kernelsrcdir}/security
 %{_kernelsrcdir}/usr
 %{_kernelsrcdir}/virt
