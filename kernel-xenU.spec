@@ -1,20 +1,17 @@
+# TODO:
+# - update kernel-xenU-x86.config for 2.6.30 kernel.
+#   I don't care, I use xen on x86_64 systems only.
 #
 # Conditional build:
 %bcond_without	source		# don't build kernel-xenU-source package
-%bcond_with	pcmcia		# build pcmcia
 %bcond_with	verbose		# verbose build (V=1)
 %bcond_with	pae		# build PAE (HIGHMEM64G) support on uniprocessor
 
 %{?debug:%define with_verbose 1}
 
-%define		have_drm	1
-%define		have_oss	1
-%define		have_sound	1
-%define		have_isa	1
-
-%define		_basever		2.6.27
-%define		_postver		.24
-%define		_rel			1
+%define		_basever		2.6.30
+%define		_postver		%{nil}
+%define		_rel			0.1
 
 %define		_enable_debug_packages			0
 
@@ -38,7 +35,7 @@ Epoch:		3
 License:	GPL v2
 Group:		Base/Kernel
 Source0:	http://www.kernel.org/pub/linux/kernel/v2.6/linux-%{_basever}.tar.bz2
-# Source0-md5:	b3e78977aa79d3754cb7f8143d7ddabd
+# Source0-md5:	7a80058a6382e5108cdb5554d1609615
 %if "%{_postver}" != "%{nil}"
 Source1:	http://www.kernel.org/pub/linux/kernel/v2.6/patch-%{version}.bz2
 # Source1-md5:	e80fcf73166ec34e54ab7c720cadc925
@@ -184,95 +181,6 @@ vmlinux - dekompressiertes Kernel Bild.
 
 %description vmlinux -l pl.UTF-8
 vmlinux - rozpakowany obraz jądra.
-
-%package drm
-Summary:	DRM kernel modules
-Summary(de.UTF-8):	DRM Kernel Treiber
-Summary(pl.UTF-8):	Sterowniki DRM
-Group:		Base/Kernel
-Requires(postun):	%{name} = %{epoch}:%{version}-%{release}
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-Obsoletes:	kernel-smp-drm
-Autoreqprov:	no
-
-%description drm
-DRM kernel modules.
-
-%description drm -l de.UTF-8
-DRM Kernel Treiber.
-
-%description drm -l pl.UTF-8
-Sterowniki DRM.
-
-%package pcmcia
-Summary:	PCMCIA modules
-Summary(de.UTF-8):	PCMCIA Module
-Summary(pl.UTF-8):	Moduły PCMCIA
-Group:		Base/Kernel
-Requires(postun):	%{name} = %{epoch}:%{version}-%{release}
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-Obsoletes:	kernel-smp-pcmcia
-Conflicts:	pcmcia-cs < 3.1.21
-Conflicts:	pcmciautils < 004
-Autoreqprov:	no
-
-%description pcmcia
-PCMCIA modules.
-
-%description pcmcia -l de.UTF-8
-PCMCIA Module.
-
-%description pcmcia -l pl.UTF-8
-Moduły PCMCIA.
-
-%package sound-alsa
-Summary:	ALSA kernel modules
-Summary(de.UTF-8):	ALSA Kernel Module
-Summary(pl.UTF-8):	Sterowniki dźwięku ALSA
-Group:		Base/Kernel
-Requires(postun):	%{name} = %{epoch}:%{version}-%{release}
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-Obsoletes:	kernel-smp-sound-alsa
-Autoreqprov:	no
-
-%description sound-alsa
-ALSA (Advanced Linux Sound Architecture) sound drivers.
-
-%description sound-alsa -l de.UTF-8
-ALSA (Advanced Linux Sound Architecture) Sound-Treiber.
-
-%description sound-alsa -l pl.UTF-8
-Sterowniki dźwięku ALSA (Advanced Linux Sound Architecture).
-
-%package sound-oss
-Summary:	OSS kernel modules
-Summary(de.UTF-8):	OSS Kernel Module
-Summary(pl.UTF-8):	Sterowniki dźwięku OSS
-Group:		Base/Kernel
-Requires(postun):	%{name} = %{epoch}:%{version}-%{release}
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-Obsoletes:	kernel-smp-sound-oss
-Autoreqprov:	no
-
-%description sound-oss
-OSS (Open Sound System) drivers.
-
-%description sound-oss -l de.UTF-8
-OSS (Open Sound System) Treiber.
-
-%description sound-oss -l pl.UTF-8
-Sterowniki dźwięku OSS (Open Sound System).
-
-%package firmware
-Summary:	Firmware for Linux kernel drivers
-Summary(pl.UTF-8):	Firmware dla sterowników z jądra Linuksa
-Group:		System Environment/Kernel
-
-%description firmware
-Firmware for Linux kernel drivers.
-
-%description firmware -l pl.UTF-8
-Firmware dla sterowników z jądra Linuksa.
 
 %package headers
 Summary:	Header files for the Linux kernel
@@ -610,30 +518,6 @@ fi
 mv -f /boot/vmlinux-%{alt_kernel} /boot/vmlinux-%{alt_kernel}.old 2> /dev/null > /dev/null
 ln -sf vmlinux-%{kernel_release} /boot/vmlinux-%{alt_kernel}
 
-%post drm
-%depmod %{kernel_release}
-
-%postun drm
-%depmod %{kernel_release}
-
-%post pcmcia
-%depmod %{kernel_release}
-
-%postun pcmcia
-%depmod %{kernel_release}
-
-%post sound-alsa
-%depmod %{kernel_release}
-
-%postun sound-alsa
-%depmod %{kernel_release}
-
-%post sound-oss
-%depmod %{kernel_release}
-
-%postun sound-oss
-%depmod %{kernel_release}
-
 %post headers
 ln -snf %{basename:%{_kernelsrcdir}} %{_prefix}/src/linux-%{alt_kernel}
 
@@ -665,9 +549,6 @@ fi
 /lib/modules/%{kernel_release}/kernel/arch
 /lib/modules/%{kernel_release}/kernel/crypto
 /lib/modules/%{kernel_release}/kernel/drivers
-%if %{have_drm}
-%exclude /lib/modules/%{kernel_release}/kernel/drivers/gpu/drm
-%endif
 /lib/modules/%{kernel_release}/kernel/fs
 
 # this directory will be removed after disabling rcutorture mod. in 2.6.20.
@@ -675,35 +556,7 @@ fi
 
 /lib/modules/%{kernel_release}/kernel/lib
 /lib/modules/%{kernel_release}/kernel/net
-%if %{have_sound}
-%dir /lib/modules/%{kernel_release}/kernel/sound
-/lib/modules/%{kernel_release}/kernel/sound/ac97_bus.ko*
-/lib/modules/%{kernel_release}/kernel/sound/sound*.ko*
-%exclude /lib/modules/%{kernel_release}/kernel/drivers/media/video/cx88/cx88-alsa.ko*
-%exclude /lib/modules/%{kernel_release}/kernel/drivers/media/video/em28xx/em28xx-alsa.ko*
-%exclude /lib/modules/%{kernel_release}/kernel/drivers/media/video/saa7134/saa7134-alsa.ko*
-%endif
 %dir /lib/modules/%{kernel_release}/misc
-%if %{with pcmcia}
-%dir /lib/modules/%{kernel_release}/kernel/drivers/pcmcia
-/lib/modules/%{kernel_release}/kernel/drivers/pcmcia/pcmcia*ko*
-%exclude /lib/modules/%{kernel_release}/kernel/drivers/pcmcia/[!p]*
-%exclude /lib/modules/%{kernel_release}/kernel/drivers/pcmcia/pd6729.ko*
-%exclude /lib/modules/%{kernel_release}/kernel/drivers/*/pcmcia
-%exclude /lib/modules/%{kernel_release}/kernel/drivers/ata/pata_pcmcia.ko*
-%exclude /lib/modules/%{kernel_release}/kernel/drivers/bluetooth/*_cs.ko*
-%exclude /lib/modules/%{kernel_release}/kernel/drivers/isdn/hardware/avm/avm_cs.ko*
-%exclude /lib/modules/%{kernel_release}/kernel/drivers/telephony/ixj_pcmcia.ko*
-%exclude /lib/modules/%{kernel_release}/kernel/drivers/usb/gadget/g_midi.ko*
-%exclude /lib/modules/%{kernel_release}/kernel/drivers/ide/legacy/ide-cs.ko*
-%exclude /lib/modules/%{kernel_release}/kernel/drivers/net/wireless/*_cs.ko*
-%exclude /lib/modules/%{kernel_release}/kernel/drivers/net/wireless/b43
-%exclude /lib/modules/%{kernel_release}/kernel/drivers/net/wireless/hostap/hostap_cs.ko*
-%exclude /lib/modules/%{kernel_release}/kernel/drivers/net/wireless/libertas/*_cs.ko*
-%exclude /lib/modules/%{kernel_release}/kernel/drivers/parport/parport_cs.ko*
-%exclude /lib/modules/%{kernel_release}/kernel/drivers/serial/serial_cs.ko*
-%exclude /lib/modules/%{kernel_release}/kernel/drivers/usb/host/sl811_cs.ko*
-%endif
 %ghost /lib/modules/%{kernel_release}/modules.*
 # symlinks pointing to kernelsrcdir
 %ghost /lib/modules/%{kernel_release}/build
@@ -713,106 +566,6 @@ fi
 %files vmlinux
 %defattr(644,root,root,755)
 /boot/vmlinux-%{kernel_release}
-
-%if %{have_drm}
-%files drm
-%defattr(644,root,root,755)
-/lib/modules/%{kernel_release}/kernel/drivers/gpu/drm
-%endif
-
-%if %{with pcmcia}
-%files pcmcia
-%defattr(644,root,root,755)
-/lib/modules/%{kernel_release}/kernel/drivers/pcmcia/*ko*
-/lib/modules/%{kernel_release}/kernel/drivers/*/pcmcia
-%exclude /lib/modules/%{kernel_release}/kernel/drivers/pcmcia/pcmcia*ko*
-/lib/modules/%{kernel_release}/kernel/drivers/bluetooth/*_cs.ko*
-/lib/modules/%{kernel_release}/kernel/drivers/isdn/hardware/avm/avm_cs.ko*
-/lib/modules/%{kernel_release}/kernel/drivers/telephony/ixj_pcmcia.ko*
-/lib/modules/%{kernel_release}/kernel/drivers/ata/pata_pcmcia.ko*
-/lib/modules/%{kernel_release}/kernel/drivers/ide/legacy/ide-cs.ko*
-/lib/modules/%{kernel_release}/kernel/drivers/net/wireless/*_cs.ko*
-/lib/modules/%{kernel_release}/kernel/drivers/net/wireless/b43
-/lib/modules/%{kernel_release}/kernel/drivers/net/wireless/hostap/hostap_cs.ko*
-/lib/modules/%{kernel_release}/kernel/drivers/net/wireless/libertas/*_cs.ko*
-/lib/modules/%{kernel_release}/kernel/drivers/parport/parport_cs.ko*
-/lib/modules/%{kernel_release}/kernel/drivers/serial/serial_cs.ko*
-/lib/modules/%{kernel_release}/kernel/drivers/usb/host/sl811_cs.ko*
-%endif
-
-%if %{have_sound}
-%files sound-alsa
-%defattr(644,root,root,755)
-/lib/modules/%{kernel_release}/kernel/sound
-%exclude %dir /lib/modules/%{kernel_release}/kernel/sound
-%exclude /lib/modules/%{kernel_release}/kernel/sound/ac97_bus.ko*
-%exclude /lib/modules/%{kernel_release}/kernel/sound/sound*.ko*
-%if %{have_oss}
-%exclude /lib/modules/%{kernel_release}/kernel/sound/oss
-%endif
-/lib/modules/%{kernel_release}/kernel/drivers/usb/gadget/g_midi.ko*
-/lib/modules/%{kernel_release}/kernel/drivers/media/video/cx88/cx88-alsa.ko*
-/lib/modules/%{kernel_release}/kernel/drivers/media/video/em28xx/em28xx-alsa.ko*
-/lib/modules/%{kernel_release}/kernel/drivers/media/video/saa7134/saa7134-alsa.ko*
-
-%if %{have_oss}
-%files sound-oss
-%defattr(644,root,root,755)
-/lib/modules/%{kernel_release}/kernel/sound/oss
-%endif
-%endif
-
-%files firmware
-/lib/firmware/atmsar11.fw
-%dir /lib/firmware/cpia2
-/lib/firmware/cpia2/stv0672_vp4.bin
-%dir /lib/firmware/dabusb
-/lib/firmware/dabusb/bitstream.bin
-/lib/firmware/dabusb/firmware.fw
-%dir /lib/firmware/edgeport
-/lib/firmware/edgeport/boot.fw
-/lib/firmware/edgeport/boot2.fw
-/lib/firmware/edgeport/down.fw
-/lib/firmware/edgeport/down2.fw
-/lib/firmware/edgeport/down3.bin
-%dir /lib/firmware/emi26
-/lib/firmware/emi26/bitstream.fw
-/lib/firmware/emi26/firmware.fw
-/lib/firmware/emi26/loader.fw
-%dir /lib/firmware/emi62
-/lib/firmware/emi62/bitstream.fw
-/lib/firmware/emi62/loader.fw
-/lib/firmware/emi62/midi.fw
-/lib/firmware/emi62/spdif.fw
-%dir /lib/firmware/ess
-/lib/firmware/ess/maestro3_assp_kernel.fw
-/lib/firmware/ess/maestro3_assp_minisrc.fw
-/lib/firmware/intelliport2.bin
-%dir /lib/firmware/kaweth
-/lib/firmware/kaweth/new_code.bin
-/lib/firmware/kaweth/new_code_fix.bin
-/lib/firmware/kaweth/trigger_code.bin
-/lib/firmware/kaweth/trigger_code_fix.bin
-%dir /lib/firmware/keyspan_pda
-/lib/firmware/keyspan_pda/keyspan_pda.fw
-/lib/firmware/keyspan_pda/xircom_pgs.fw
-%dir /lib/firmware/korg
-/lib/firmware/korg/k1212.dsp
-/lib/firmware/ti_3410.fw
-/lib/firmware/ti_5052.fw
-%ifarch %{ix86}
-/lib/firmware/tr_smctr.bin
-%endif
-%dir /lib/firmware/ttusb-budget
-/lib/firmware/ttusb-budget/dspbootcode.bin
-%dir /lib/firmware/vicam
-/lib/firmware/vicam/firmware.fw
-/lib/firmware/whiteheat.fw
-/lib/firmware/whiteheat_loader.fw
-%dir /lib/firmware/yamaha
-/lib/firmware/yamaha/ds1_ctrl.fw
-/lib/firmware/yamaha/ds1_dsp.fw
-/lib/firmware/yamaha/ds1e_ctrl.fw
 
 %files headers
 %defattr(644,root,root,755)
@@ -885,7 +638,6 @@ fi
 %exclude %{_kernelsrcdir}/scripts/setlocalversion
 %exclude %{_kernelsrcdir}/scripts/*.c
 %exclude %{_kernelsrcdir}/scripts/*.sh
-%{_kernelsrcdir}/sound
 %{_kernelsrcdir}/security
 %{_kernelsrcdir}/usr
 %{_kernelsrcdir}/virt
