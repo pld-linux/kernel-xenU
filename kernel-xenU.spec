@@ -5,7 +5,6 @@
 # Conditional build:
 %bcond_without	source		# don't build kernel-xenU-source package
 %bcond_with	verbose		# verbose build (V=1)
-%bcond_with	pae		# build PAE (HIGHMEM64G) support on uniprocessor
 
 %{?debug:%define with_verbose 1}
 
@@ -15,7 +14,7 @@
 
 %define		_enable_debug_packages			0
 
-%define		alt_kernel	xenU%{?with_pae:-pae}
+%define		alt_kernel	xenU
 
 # kernel release (used in filesystem and eventually in uname -r)
 # modules will be looked from /lib/modules/%{kernel_release}
@@ -45,8 +44,7 @@ Source2:	kernel-xenU-autoconf.h
 Source3:	kernel-xenU-config.h
 Source4:	kernel-xenU-module-build.pl
 
-Source10:	kernel-xenU-x86.config
-Source11:	kernel-xenU-x86_64.config
+Source10:	kernel-xenU-x86_64.config
 
 URL:		http://www.kernel.org/
 BuildRequires:	binutils >= 3:2.18
@@ -88,12 +86,7 @@ Conflicts:	reiserfsprogs < 3.6.3
 Conflicts:	udev < 1:071
 Conflicts:	util-linux < 2.10o
 Conflicts:	xfsprogs < 2.6.0
-%if %{with pae}
-ExclusiveArch:  %{ix86}
-ExcludeArch:	i386 i486 i586
-%else
-ExclusiveArch:	%{ix86} %{x8664}
-%endif
+ExclusiveArch:	%{x8664}
 ExclusiveOS:	Linux
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
