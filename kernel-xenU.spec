@@ -48,8 +48,8 @@ Source4:	kernel-xenU-module-build.pl
 Source10:	kernel-xenU-x86_64.config
 
 URL:		http://www.kernel.org/
-BuildRequires:	binutils >= 3:2.18
 BuildRequires:	/sbin/depmod
+BuildRequires:	binutils >= 3:2.18
 BuildRequires:	gcc >= 5:3.2
 # for hostname command
 BuildRequires:	net-tools
