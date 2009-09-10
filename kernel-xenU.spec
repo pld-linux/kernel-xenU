@@ -1,6 +1,6 @@
 # TODO:
 # - x86 version
-# - ostrzeżenie: Znaleziono zainstalowane (ale niespakietowane) pliki:
+# - ostrzezenie: Znaleziono zainstalowane (ale niespakietowane) pliki:
 #   /usr/src/linux-2.6.31-xenU/tools/perf/*
 #
 # Conditional build:
