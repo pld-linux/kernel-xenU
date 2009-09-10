@@ -1,6 +1,7 @@
 # TODO:
-# - update kernel-xenU-x86.config for 2.6.30 kernel.
-#   I don't care, I use xen on x86_64 systems only.
+# - x86 version
+# - ostrzeżenie: Znaleziono zainstalowane (ale niespakietowane) pliki:
+#   /usr/src/linux-2.6.31-xenU/tools/perf/*
 #
 # Conditional build:
 %bcond_without	source		# don't build kernel-xenU-source package
@@ -8,8 +9,8 @@
 
 %{?debug:%define with_verbose 1}
 
-%define		_basever		2.6.30
-%define		_postver		.6
+%define		_basever		2.6.31
+%define		_postver		%{nil}
 %define		_rel			1
 
 %define		_enable_debug_packages			0
@@ -34,7 +35,7 @@ Epoch:		3
 License:	GPL v2
 Group:		Base/Kernel
 Source0:	http://www.kernel.org/pub/linux/kernel/v2.6/linux-%{_basever}.tar.bz2
-# Source0-md5:	7a80058a6382e5108cdb5554d1609615
+# Source0-md5:	84c077a37684e4cbfa67b18154390d8a
 %if "%{_postver}" != "%{nil}"
 Source1:	http://www.kernel.org/pub/linux/kernel/v2.6/patch-%{version}.bz2
 # Source1-md5:	f89295707f68c2b349534b490c9d5f2d
