@@ -6,7 +6,10 @@
 # Conditional build:
 %bcond_without	source		# don't build kernel-xenU-source package
 %bcond_with	verbose		# verbose build (V=1)
+%bcond_with	vserver		# enable vserver
+%bcond_with	ipv6		# enable vserver
 
+%{!?with_vserver:%define with_ipv6 1}
 %{?debug:%define with_verbose 1}
 
 %define		_basever		2.6.31
@@ -15,7 +18,7 @@
 
 %define		_enable_debug_packages			0
 
-%define		alt_kernel	xenU
+%define		alt_kernel	xenU%{?with_vserver:vserver}
 
 # kernel release (used in filesystem and eventually in uname -r)
 # modules will be looked from /lib/modules/%{kernel_release}
@@ -46,6 +49,8 @@ Source3:	kernel-xenU-config.h
 Source4:	kernel-xenU-module-build.pl
 
 Source10:	kernel-xenU-x86_64.config
+
+Patch1:		linux-2.6-vs2.3.patch
 
 URL:		http://www.kernel.org/
 BuildRequires:	/sbin/depmod
@@ -275,6 +280,10 @@ Pakiet zawiera dokumentację do jądra Linuksa pochodzącą z katalogu
 %{__bzip2} -dc %{SOURCE1} | patch -p1 -s
 %endif
 
+%if %{with vserver}
+%patch1 -p1
+%endif
+
 # Fix EXTRAVERSION in main Makefile
 sed -i 's#EXTRAVERSION =.*#EXTRAVERSION = %{_postver}-%{alt_kernel}#g' Makefile
 
@@ -338,6 +347,37 @@ BuildConfig() {
 %{?debug:sed -i "s:# CONFIG_DEBUG_PREEMPT is not set:CONFIG_DEBUG_PREEMPT=y:" %{defconfig}}
 %{?debug:sed -i "s:# CONFIG_RT_DEADLOCK_DETECT is not set:CONFIG_RT_DEADLOCK_DETECT=y:" %{defconfig}}
 
+%if %{with vserver}
+cat >> %{defconfig} << EOF
+#
+# Linux VServer
+#
+CONFIG_VSERVER_AUTO_LBACK=y
+# CONFIG_VSERVER_AUTO_SINGLE is not set
+CONFIG_VSERVER_COWBL=y
+CONFIG_VSERVER_VTIME=y
+CONFIG_VSERVER_DEVICE=y
+CONFIG_VSERVER_PROC_SECURE=y
+CONFIG_VSERVER_HARDCPU=y
+CONFIG_VSERVER_IDLETIME=y
+CONFIG_VSERVER_IDLELIMIT=y
+# CONFIG_TAGGING_NONE is not set
+# CONFIG_TAGGING_UID16 is not set
+# CONFIG_TAGGING_GID16 is not set
+CONFIG_TAGGING_ID24=y
+# CONFIG_TAGGING_INTERN is not set
+# CONFIG_TAG_NFSD is not set
+CONFIG_VSERVER_PRIVACY=y
+CONFIG_VSERVER_CONTEXTS=768
+CONFIG_VSERVER_WARN=y
+# CONFIG_VSERVER_DEBUG is not set
+CONFIG_VSERVER=y
+CONFIG_VSERVER_SECURITY=y
+CONFIG_IPV6=%{?with_ipv6:y}%{!?with_ipv6:n}
+CONFIG_CFS_HARD_LIMITS=n
+CONFIG_BLK_DEV_VROOT=m
+EOF
+%endif
 }
 
 BuildKernel() {
