@@ -6,19 +6,19 @@
 # Conditional build:
 %bcond_without	source		# don't build kernel-xenU-source package
 %bcond_with	verbose		# verbose build (V=1)
-%bcond_with	vserver		# enable vserver
+%bcond_without	vserver		# enable vserver
 %bcond_with	ipv6		# enable vserver
 
 %{!?with_vserver:%define with_ipv6 1}
 %{?debug:%define with_verbose 1}
 
-%define		_basever		2.6.31
-%define		_postver		.6
+%define		_basever		2.6.32
+%define		_postver		%{nil}
 %define		_rel			1
 
 %define		_enable_debug_packages			0
 
-%define		alt_kernel	xenU%{?with_vserver:vserver}
+%define		alt_kernel	xenU%{!?with_vserver:novserver}
 
 # kernel release (used in filesystem and eventually in uname -r)
 # modules will be looked from /lib/modules/%{kernel_release}
@@ -38,7 +38,7 @@ Epoch:		3
 License:	GPL v2
 Group:		Base/Kernel
 Source0:	http://www.kernel.org/pub/linux/kernel/v2.6/linux-%{_basever}.tar.bz2
-# Source0-md5:	84c077a37684e4cbfa67b18154390d8a
+# Source0-md5:	260551284ac224c3a43c4adac7df4879
 %if "%{_postver}" != "%{nil}"
 Source1:	http://www.kernel.org/pub/linux/kernel/v2.6/patch-%{version}.bz2
 # Source1-md5:	89802830db41e517cdf0954145f73337
