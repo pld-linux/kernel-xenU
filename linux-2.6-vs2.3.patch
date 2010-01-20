@@ -26233,8 +26233,8 @@ diff -NurpP --minimal linux-2.6.32.2/Makefile linux-2.6.32.2-vs2.3.0.36.28/Makef
  VERSION = 2
  PATCHLEVEL = 6
  SUBLEVEL = 32
--EXTRAVERSION = .2
-+EXTRAVERSION = .2-vs2.3.0.36.28
+-EXTRAVERSION = .4
++EXTRAVERSION = .4-vs2.3.0.36.28
  NAME = Man-Eating Seals of Antiquity
  
  # *DOCUMENTATION*
@@ -26571,9 +26571,9 @@ diff -NurpP --minimal linux-2.6.32.2/mm/mmap.c linux-2.6.32.2-vs2.3.0.36.28/mm/m
  
  	perf_event_mmap(vma);
  
-diff -NurpP --minimal linux-2.6.32.2/mm/mremap.c linux-2.6.32.2-vs2.3.0.36.28/mm/mremap.c
---- linux-2.6.32.2/mm/mremap.c	2009-12-03 20:02:58.000000000 +0100
-+++ linux-2.6.32.2-vs2.3.0.36.28/mm/mremap.c	2009-12-03 20:04:56.000000000 +0100
+diff -NurpP --minimal linux-2.6.32.4/mm/mremap.c linux-2.6.32.4-vs2.3.0.36.28/mm/mremap.c
+--- linux-2.6.32.4/mm/mremap.c	2009-12-03 20:02:58.000000000 +0100
++++ linux-2.6.32.4-vs2.3.0.36.28/mm/mremap.c	2009-12-03 20:04:56.000000000 +0100
 @@ -20,6 +20,7 @@
  #include <linux/security.h>
  #include <linux/syscalls.h>
@@ -26582,7 +26582,7 @@ diff -NurpP --minimal linux-2.6.32.2/mm/mremap.c linux-2.6.32.2-vs2.3.0.36.28/mm
  
  #include <asm/uaccess.h>
  #include <asm/cacheflush.h>
-@@ -234,7 +235,7 @@ static unsigned long move_vma(struct vm_
+@@ -234,7 +235,7 @@
  	 * If this were a serious issue, we'd add a flag to do_munmap().
  	 */
  	hiwater_vm = mm->hiwater_vm;
@@ -26591,7 +26591,7 @@ diff -NurpP --minimal linux-2.6.32.2/mm/mremap.c linux-2.6.32.2-vs2.3.0.36.28/mm
  	vm_stat_account(mm, vma->vm_flags, vma->vm_file, new_len>>PAGE_SHIFT);
  
  	if (do_munmap(mm, old_addr, old_len) < 0) {
-@@ -252,7 +253,7 @@ static unsigned long move_vma(struct vm_
+@@ -252,7 +253,7 @@
  	}
  
  	if (vm_flags & VM_LOCKED) {
@@ -26600,17 +26600,34 @@ diff -NurpP --minimal linux-2.6.32.2/mm/mremap.c linux-2.6.32.2-vs2.3.0.36.28/mm
  		if (new_len > old_len)
  			mlock_vma_pages_range(new_vma, new_addr + old_len,
  						       new_addr + new_len);
-@@ -363,6 +364,9 @@ unsigned long do_mremap(unsigned long ad
- 		ret = -EAGAIN;
+@@ -288,11 +289,14 @@
+ 		lock_limit = current->signal->rlim[RLIMIT_MEMLOCK].rlim_cur;
+ 		locked += new_len - old_len;
  		if (locked > lock_limit && !capable(CAP_IPC_LOCK))
- 			goto out;
+-			goto Eagain;
++			goto out;
 +		if (!vx_vmlocked_avail(current->mm,
 +			(new_len - old_len) >> PAGE_SHIFT))
 +			goto out;
  	}
- 	if (!may_expand_vm(mm, (new_len - old_len) >> PAGE_SHIFT)) {
- 		ret = -ENOMEM;
-@@ -391,10 +395,12 @@ unsigned long do_mremap(unsigned long ad
+-
+-	if (!may_expand_vm(mm, (new_len - old_len) >> PAGE_SHIFT))
++	if (!may_expand_vm(mm, (new_len - old_len) >> PAGE_SHIFT)) {
+ 		goto Enomem;
++	}
+ 
+ 	if (vma->vm_flags & VM_ACCOUNT) {
+ 		unsigned long charged = (new_len - old_len) >> PAGE_SHIFT;
+@@ -309,7 +313,7 @@
+ 	return ERR_PTR(-EINVAL);
+ Enomem:
+ 	return ERR_PTR(-ENOMEM);
+-Eagain:
++out:
+ 	return ERR_PTR(-EAGAIN);
+ }
+ 
+@@ -463,10 +467,12 @@
  			vma_adjust(vma, vma->vm_start,
  				addr + new_len, vma->vm_pgoff, NULL);
  
