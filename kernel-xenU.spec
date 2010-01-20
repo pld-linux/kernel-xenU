@@ -13,7 +13,7 @@
 %{?debug:%define with_verbose 1}
 
 %define		_basever		2.6.32
-%define		_postver		%{nil}
+%define		_postver		.2
 %define		_rel			1
 
 %define		_enable_debug_packages			0
@@ -41,7 +41,7 @@ Source0:	http://www.kernel.org/pub/linux/kernel/v2.6/linux-%{_basever}.tar.bz2
 # Source0-md5:	260551284ac224c3a43c4adac7df4879
 %if "%{_postver}" != "%{nil}"
 Source1:	http://www.kernel.org/pub/linux/kernel/v2.6/patch-%{version}.bz2
-# Source1-md5:	89802830db41e517cdf0954145f73337
+# Source1-md5:	924b7aa0fcd6e54c12ecc9b3c3082f59
 %endif
 
 Source2:	kernel-xenU-autoconf.h
