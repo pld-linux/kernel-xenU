@@ -26226,18 +26226,6 @@ diff -NurpP --minimal linux-2.6.32.2/kernel/vserver/vci_config.h linux-2.6.32.2-
 +	0;
 +}
 +
-diff -NurpP --minimal linux-2.6.32.2/Makefile linux-2.6.32.2-vs2.3.0.36.28/Makefile
---- linux-2.6.32.2/Makefile	2009-12-29 00:16:45.000000000 +0100
-+++ linux-2.6.32.2-vs2.3.0.36.28/Makefile	2009-12-31 14:53:32.000000000 +0100
-@@ -1,7 +1,7 @@
- VERSION = 2
- PATCHLEVEL = 6
- SUBLEVEL = 32
--EXTRAVERSION = .9
-+EXTRAVERSION = .9-vs2.3.0.36.28
- NAME = Man-Eating Seals of Antiquity
- 
- # *DOCUMENTATION*
 diff -NurpP --minimal linux-2.6.32.2/mm/allocpercpu.c linux-2.6.32.2-vs2.3.0.36.28/mm/allocpercpu.c
 --- linux-2.6.32.2/mm/allocpercpu.c	2009-12-03 20:02:58.000000000 +0100
 +++ linux-2.6.32.2-vs2.3.0.36.28/mm/allocpercpu.c	2009-12-03 20:04:56.000000000 +0100
