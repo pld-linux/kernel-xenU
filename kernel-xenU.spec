@@ -2,6 +2,7 @@
 # - x86 version
 # - ostrzezenie: Znaleziono zainstalowane (ale niespakietowane) pliki:
 #   /usr/src/linux-2.6.31-xenU/tools/perf/*
+# - update vserver patch. It does not applies since 2.6.32.11
 #
 # Conditional build:
 %bcond_without	source		# don't build kernel-xenU-source package
@@ -14,7 +15,7 @@
 
 %define		_basever		2.6.32
 %define		_postver		.11
-%define		_rel			1
+%define		_rel			1.1
 
 %define		_enable_debug_packages			0
 
