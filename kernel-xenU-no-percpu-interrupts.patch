@@ -1,0 +1,57 @@
+Revert "xen: use percpu interrupts for IPIs and VIRQs"
+
+This reverts commit c7b28349a66e0aa9a24872dfc55a5296fc01a360.
+
+It caused kernel-xenU to panic just after the boot.
+
+diff --git a/drivers/xen/events.c b/drivers/xen/events.c
+index a4dc7bf..50cfdb0 100644
+--- a/drivers/xen/events.c
++++ b/drivers/xen/events.c
+@@ -106,7 +106,6 @@ static inline unsigned long *cpu_evtchn_mask(int cpu)
+ #define VALID_EVTCHN(chn)	((chn) != 0)
+ 
+ static struct irq_chip xen_dynamic_chip;
+-static struct irq_chip xen_percpu_chip;
+ 
+ /* Constructor for packed IRQ information. */
+ static struct irq_info mk_unbound_info(void)
+@@ -389,8 +388,8 @@ static int bind_ipi_to_irq(unsigned int ipi, unsigned int cpu)
+ 		if (irq < 0)
+ 			goto out;
+ 
+-		set_irq_chip_and_handler_name(irq, &xen_percpu_chip,
+-					      handle_percpu_irq, "ipi");
++		set_irq_chip_and_handler_name(irq, &xen_dynamic_chip,
++					      handle_level_irq, "ipi");
+ 
+ 		bind_ipi.vcpu = cpu;
+ 		if (HYPERVISOR_event_channel_op(EVTCHNOP_bind_ipi,
+@@ -430,8 +429,8 @@ static int bind_virq_to_irq(unsigned int virq, unsigned int cpu)
+ 
+ 		irq = find_unbound_irq();
+ 
+-		set_irq_chip_and_handler_name(irq, &xen_percpu_chip,
+-					      handle_percpu_irq, "virq");
++		set_irq_chip_and_handler_name(irq, &xen_dynamic_chip,
++					      handle_level_irq, "virq");
+ 
+ 		evtchn_to_irq[evtchn] = irq;
+ 		irq_info[irq] = mk_virq_info(evtchn, virq);
+@@ -930,16 +929,6 @@ static struct irq_chip xen_dynamic_chip __read_mostly = {
+ 	.retrigger	= retrigger_dynirq,
+ };
+ 
+-static struct irq_chip en_percpu_chip __read_mostly = {
+-	.name		= "xen-percpu",
+-
+-	.disable	= disable_dynirq,
+-	.mask		= disable_dynirq,
+-	.unmask		= enable_dynirq,
+-
+-	.ack		= ack_dynirq,
+-};
+-
+ void __init xen_init_IRQ(void)
+ {
+ 	int i;
