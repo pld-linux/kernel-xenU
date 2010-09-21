@@ -16359,10 +16359,9 @@ diff -NurpP --minimal linux-2.6.32.21/kernel/sched_debug.c linux-2.6.32.21-vs2.3
  		init_utsname()->release,
  		(int)strcspn(init_utsname()->version, " "),
  		init_utsname()->version);
-diff -NurpP --minimal linux-2.6.32.21/kernel/sched_fair.c linux-2.6.32.21-vs2.3.0.36.29.6/kernel/sched_fair.c
---- linux-2.6.32.21/kernel/sched_fair.c	2010-09-05 01:11:44.000000000 +0200
-+++ linux-2.6.32.21-vs2.3.0.36.29.6/kernel/sched_fair.c	2010-02-12 10:59:55.000000000 +0100
-@@ -192,7 +192,308 @@ find_matching_se(struct sched_entity **s
+--- linux-2.6.32/kernel/sched_fair.c.orig	2010-09-21 06:53:01.322446740 +0200
++++ linux-2.6.32/kernel/sched_fair.c	2010-09-21 07:06:40.821893322 +0200
+@@ -192,7 +192,308 @@
  	}
  }
  
@@ -16672,7 +16671,7 @@ diff -NurpP --minimal linux-2.6.32.21/kernel/sched_fair.c linux-2.6.32.21-vs2.3.
  
  static inline struct task_struct *task_of(struct sched_entity *se)
  {
-@@ -254,7 +555,6 @@ find_matching_se(struct sched_entity **s
+@@ -254,7 +555,6 @@
  
  #endif	/* CONFIG_FAIR_GROUP_SCHED */
  
@@ -16680,7 +16679,7 @@ diff -NurpP --minimal linux-2.6.32.21/kernel/sched_fair.c linux-2.6.32.21-vs2.3.
  /**************************************************************
   * Scheduling class tree data structure manipulation methods:
   */
-@@ -492,14 +792,25 @@ __update_curr(struct cfs_rq *cfs_rq, str
+@@ -493,14 +793,25 @@
  	update_min_vruntime(cfs_rq);
  }
  
@@ -16709,7 +16708,7 @@ diff -NurpP --minimal linux-2.6.32.21/kernel/sched_fair.c linux-2.6.32.21-vs2.3.
  
  	/*
  	 * Get the amount of time the current task was running
-@@ -508,17 +819,29 @@ static void update_curr(struct cfs_rq *c
+@@ -509,17 +820,29 @@
  	 */
  	delta_exec = (unsigned long)(now - curr->exec_start);
  	if (!delta_exec)
@@ -16729,13 +16728,13 @@ diff -NurpP --minimal linux-2.6.32.21/kernel/sched_fair.c linux-2.6.32.21-vs2.3.
 +	struct sched_entity *curr = cfs_rq->curr;
 +	struct rq *rq = rq_of(cfs_rq);
 +	unsigned long delta_exec;
++
++	if (update_curr_common(cfs_rq, &delta_exec))
++		return ;
  
 -		trace_sched_stat_runtime(curtask, delta_exec, curr->vruntime);
 -		cpuacct_charge(curtask, delta_exec);
 -		account_group_exec_runtime(curtask, delta_exec);
-+	if (update_curr_common(cfs_rq, &delta_exec))
-+		return ;
-+
 +	if (entity_is_task(curr))
 +		update_curr_task(curr, delta_exec);
 +	else {
@@ -16745,23 +16744,29 @@ diff -NurpP --minimal linux-2.6.32.21/kernel/sched_fair.c linux-2.6.32.21-vs2.3.
  	}
  }
  
-@@ -743,13 +1066,9 @@ place_entity(struct cfs_rq *cfs_rq, stru
- 	se->vruntime = vruntime;
- }
+@@ -747,8 +1070,8 @@
+ #define ENQUEUE_WAKEUP	1
+ #define ENQUEUE_MIGRATE 2
  
 -static void
--enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int wakeup)
+-enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
 +static void enqueue_entity_common(struct cfs_rq *cfs_rq,
-+		struct sched_entity *se, int wakeup)
++		struct sched_entity *se, int flags)
  {
+ 	/*
+ 	 * Update the normalized vruntime before updating min_vruntime
+@@ -757,10 +1080,6 @@
+ 	if (!(flags & ENQUEUE_WAKEUP) || (flags & ENQUEUE_MIGRATE))
+ 		se->vruntime += cfs_rq->min_vruntime;
+ 
 -	/*
 -	 * Update run-time statistics of the 'current'.
 -	 */
 -	update_curr(cfs_rq);
  	account_entity_enqueue(cfs_rq, se);
  
- 	if (wakeup) {
-@@ -761,6 +1080,29 @@ enqueue_entity(struct cfs_rq *cfs_rq, st
+ 	if (flags & ENQUEUE_WAKEUP) {
+@@ -772,6 +1091,29 @@
  	check_spread(cfs_rq, se);
  	if (se != cfs_rq->curr)
  		__enqueue_entity(cfs_rq, se);
@@ -16791,7 +16796,7 @@ diff -NurpP --minimal linux-2.6.32.21/kernel/sched_fair.c linux-2.6.32.21-vs2.3.
  }
  
  static void __clear_buddies(struct cfs_rq *cfs_rq, struct sched_entity *se)
-@@ -804,6 +1146,8 @@ dequeue_entity(struct cfs_rq *cfs_rq, st
+@@ -815,6 +1157,8 @@
  
  	if (se != cfs_rq->curr)
  		__dequeue_entity(cfs_rq, se);
@@ -16799,8 +16804,8 @@ diff -NurpP --minimal linux-2.6.32.21/kernel/sched_fair.c linux-2.6.32.21-vs2.3.
 +		vx_deactivate_task(task_of(se));
  	account_entity_dequeue(cfs_rq, se);
  	update_min_vruntime(cfs_rq);
- }
-@@ -900,6 +1244,32 @@ static struct sched_entity *pick_next_en
+ 
+@@ -919,6 +1263,32 @@
  	return se;
  }
  
@@ -16833,7 +16838,7 @@ diff -NurpP --minimal linux-2.6.32.21/kernel/sched_fair.c linux-2.6.32.21-vs2.3.
  static void put_prev_entity(struct cfs_rq *cfs_rq, struct sched_entity *prev)
  {
  	/*
-@@ -911,6 +1281,8 @@ static void put_prev_entity(struct cfs_r
+@@ -930,6 +1300,8 @@
  
  	check_spread(cfs_rq, prev);
  	if (prev->on_rq) {
@@ -16842,7 +16847,7 @@ diff -NurpP --minimal linux-2.6.32.21/kernel/sched_fair.c linux-2.6.32.21-vs2.3.
  		update_stats_wait_start(cfs_rq, prev);
  		/* Put 'current' back into the tree. */
  		__enqueue_entity(cfs_rq, prev);
-@@ -1007,10 +1379,28 @@ static inline void hrtick_update(struct 
+@@ -1026,10 +1398,28 @@
  }
  #endif
  
@@ -16869,27 +16874,24 @@ diff -NurpP --minimal linux-2.6.32.21/kernel/sched_fair.c linux-2.6.32.21-vs2.3.
   * then put the task into the rbtree:
 + * Don't enqueue a throttled entity further into the hierarchy.
   */
- static void enqueue_task_fair(struct rq *rq, struct task_struct *p, int wakeup)
- {
-@@ -1020,11 +1410,15 @@ static void enqueue_task_fair(struct rq 
+ static void
+ enqueue_task_fair(struct rq *rq, struct task_struct *p, int wakeup, bool head)
+@@ -1046,8 +1436,13 @@
  	for_each_sched_entity(se) {
  		if (se->on_rq)
  			break;
 +
  		cfs_rq = cfs_rq_of(se);
--		enqueue_entity(cfs_rq, se, wakeup);
+-		enqueue_entity(cfs_rq, se, flags);
 +		if (entity_is_task(se))
 +			enqueue_entity(cfs_rq, se, wakeup);
 +		else
 +			if (enqueue_group_entity(cfs_rq, se, wakeup))
 +				break;
- 		wakeup = 1;
+ 		flags = ENQUEUE_WAKEUP;
  	}
--
- 	hrtick_update(rq);
- }
  
-@@ -1044,6 +1438,17 @@ static void dequeue_task_fair(struct rq 
+@@ -1070,6 +1465,17 @@
  		/* Don't dequeue parent if it has other entities besides us */
  		if (cfs_rq->load.weight)
  			break;
@@ -16907,7 +16909,7 @@ diff -NurpP --minimal linux-2.6.32.21/kernel/sched_fair.c linux-2.6.32.21-vs2.3.
  		sleep = 1;
  	}
  
-@@ -1821,9 +2226,10 @@ load_balance_fair(struct rq *this_rq, in
+@@ -1886,9 +2292,10 @@
  		u64 rem_load, moved_load;
  
  		/*
@@ -16920,7 +16922,7 @@ diff -NurpP --minimal linux-2.6.32.21/kernel/sched_fair.c linux-2.6.32.21-vs2.3.
  			continue;
  
  		rem_load = (u64)rem_load_move * busiest_weight;
-@@ -1872,6 +2278,12 @@ move_one_task_fair(struct rq *this_rq, i
+@@ -1937,6 +2344,12 @@
  
  	for_each_leaf_cfs_rq(busiest, busy_cfs_rq) {
  		/*
