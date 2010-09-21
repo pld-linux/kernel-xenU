@@ -15,7 +15,7 @@
 
 %define		_basever		2.6.32
 %define		_postver		.22
-%define		_rel			1
+%define		_rel			2
 
 %define		_enable_debug_packages			0
 
@@ -51,6 +51,7 @@ Source4:	kernel-xenU-module-build.pl
 
 Source10:	kernel-xenU-x86_64.config
 
+Patch0:		%{name}-no-percpu-interrupts.patch
 Patch1:		linux-2.6-vs2.3.patch
 
 URL:		http://www.kernel.org/
@@ -280,6 +281,8 @@ Pakiet zawiera dokumentację do jądra Linuksa pochodzącą z katalogu
 %if "%{_postver}" != "%{nil}"
 %{__bzip2} -dc %{SOURCE1} | patch -p1 -s
 %endif
+
+%patch0 -p1
 
 %if %{with vserver}
 %patch1 -p1
