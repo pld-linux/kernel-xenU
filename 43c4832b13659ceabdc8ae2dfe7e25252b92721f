@@ -1,0 +1,3 @@
+- added no-percpu-interrupts.patch (reverts commit that caused kernel to panic just after the boot)
+- xen_blkfront, ext3, ext4, xfs and murderfs are now compiled into kernel, so initrd is no longer needed
+- rel 2
