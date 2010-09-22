@@ -591,12 +591,10 @@ fi
 /lib/modules/%{kernel_release}/kernel/crypto
 /lib/modules/%{kernel_release}/kernel/drivers
 /lib/modules/%{kernel_release}/kernel/fs
-
-# this directory will be removed after disabling rcutorture mod. in 2.6.20.
 /lib/modules/%{kernel_release}/kernel/kernel
-
 /lib/modules/%{kernel_release}/kernel/lib
 /lib/modules/%{kernel_release}/kernel/net
+/lib/modules/%{kernel_release}/kernel/block
 %dir /lib/modules/%{kernel_release}/misc
 %ghost /lib/modules/%{kernel_release}/modules.*
 # symlinks pointing to kernelsrcdir
