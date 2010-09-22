@@ -8,14 +8,12 @@
 %bcond_without	source		# don't build kernel-xenU-source package
 %bcond_with	verbose		# verbose build (V=1)
 %bcond_without	vserver		# enable vserver
-%bcond_with	ipv6		# enable vserver
 
-%{!?with_vserver:%define with_ipv6 1}
 %{?debug:%define with_verbose 1}
 
-%define		_basever		2.6.32
-%define		_postver		.22
-%define		_rel			2
+%define		_basever		2.6.35
+%define		_postver		.5
+%define		_rel			0.1
 
 %define		_enable_debug_packages			0
 
@@ -39,10 +37,10 @@ Epoch:		3
 License:	GPL v2
 Group:		Base/Kernel
 Source0:	http://www.kernel.org/pub/linux/kernel/v2.6/linux-%{_basever}.tar.bz2
-# Source0-md5:	260551284ac224c3a43c4adac7df4879
+# Source0-md5:	091abeb4684ce03d1d936851618687b6
 %if "%{_postver}" != "%{nil}"
 Source1:	http://www.kernel.org/pub/linux/kernel/v2.6/patch-%{version}.bz2
-# Source1-md5:	da1431a1d659298c6bd11714416c840f
+# Source1-md5:	5bf1900e4ea72b8c65f4f7aae0a28d14
 %endif
 
 Source2:	kernel-xenU-autoconf.h
@@ -377,9 +375,9 @@ CONFIG_VSERVER_WARN=y
 # CONFIG_VSERVER_DEBUG is not set
 CONFIG_VSERVER=y
 CONFIG_VSERVER_SECURITY=y
-CONFIG_IPV6=%{?with_ipv6:y}%{!?with_ipv6:n}
 CONFIG_CFS_HARD_LIMITS=n
 CONFIG_BLK_DEV_VROOT=m
+# CONFIG_VSERVER_LEGACY_MEM is not set
 EOF
 %endif
 }
