@@ -437,19 +437,19 @@ KERNEL_INSTALL_DIR="$KERNEL_BUILD_DIR/build-done/kernel"
 rm -rf $KERNEL_INSTALL_DIR
 BuildConfig
 ln -sf %{defconfig} .config
+BuildKernel
+install -d $KERNEL_INSTALL_DIR%{_kernelsrcdir}/include/generated
 install -d $KERNEL_INSTALL_DIR%{_kernelsrcdir}/include/linux
-rm -f include/linux/autoconf.h
-%{__make} %CrossOpts include/linux/autoconf.h
-install include/linux/autoconf.h \
-	$KERNEL_INSTALL_DIR%{_kernelsrcdir}/include/linux/autoconf-dist.h
+install include/generated/autoconf.h \
+	$KERNEL_INSTALL_DIR%{_kernelsrcdir}/include/generated/autoconf-dist.h
+install include/generated/utsrelease.h \
+	$KERNEL_INSTALL_DIR%{_kernelsrcdir}/include/generated/
+install include/linux/version.h \
+	$KERNEL_INSTALL_DIR%{_kernelsrcdir}/include/linux/
 install .config \
 	$KERNEL_INSTALL_DIR%{_kernelsrcdir}/config-dist
-BuildKernel
 PreInstallKernel
 
-%{__make} %CrossOpts include/linux/utsrelease.h
-cp include/linux/utsrelease.h{,.save}
-cp include/linux/version.h{,.save}
 cp scripts/mkcompile_h{,.save}
 
 %install
@@ -495,12 +495,17 @@ cp -Rdp$l $KERNEL_BUILD_DIR/include/linux/* \
 	$RPM_BUILD_ROOT%{_kernelsrcdir}/include/linux
 
 %{__make} %CrossOpts mrproper
-mv -f include/linux/utsrelease.h.save $RPM_BUILD_ROOT%{_kernelsrcdir}/include/linux/utsrelease.h
-cp include/linux/version.h{.save,}
-cp scripts/mkcompile_h{.save,}
-rm -rf include/linux/version.h.save
-rm -rf scripts/mkcompile_h.save
-install %{SOURCE2} $RPM_BUILD_ROOT%{_kernelsrcdir}/include/linux/autoconf.h
+install -d $RPM_BUILD_ROOT%{_kernelsrcdir}/include/generated
+install -d $RPM_BUILD_ROOT%{_kernelsrcdir}/include/linux
+install $KERNEL_BUILD_DIR/build-done/kernel%{_kernelsrcdir}/include/linux/version.h \
+	$RPM_BUILD_ROOT%{_kernelsrcdir}/include/linux
+install $KERNEL_BUILD_DIR/build-done/kernel%{_kernelsrcdir}/include/generated/autoconf-dist.h \
+	$RPM_BUILD_ROOT%{_kernelsrcdir}/include/generated
+install $KERNEL_BUILD_DIR/build-done/kernel%{_kernelsrcdir}/include/generated/utsrelease.h \
+	$RPM_BUILD_ROOT%{_kernelsrcdir}/include/generated
+install $KERNEL_BUILD_DIR/build-done/kernel%{_kernelsrcdir}/config-dist \
+	$RPM_BUILD_ROOT%{_kernelsrcdir}
+install %{SOURCE2} $RPM_BUILD_ROOT%{_kernelsrcdir}/include/generated/autoconf.h
 install %{SOURCE3} $RPM_BUILD_ROOT%{_kernelsrcdir}/include/linux/config.h
 
 # collect module-build files and directories
