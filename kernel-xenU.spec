@@ -13,7 +13,7 @@
 
 %define		_basever		2.6.35
 %define		_postver		.5
-%define		_rel			1
+%define		_rel			2
 
 %define		_enable_debug_packages			0
 
@@ -49,7 +49,7 @@ Source4:	kernel-xenU-module-build.pl
 
 Source10:	kernel-xenU-x86_64.config
 
-Patch0:		%{name}-no-percpu-interrupts.patch
+Patch0:		%{name}-fix-panic-at-boot.patch
 Patch1:		linux-2.6-vs2.3.patch
 
 URL:		http://www.kernel.org/
