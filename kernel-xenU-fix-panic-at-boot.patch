@@ -1,0 +1,21 @@
+commit 12911c2530479fbc56fd1fd6650e0f492db46a6b
+Author: James Dingwall <james.dingwall@amdocs.com>
+Date:   Thu Sep 23 19:35:39 2010 +0200
+
+    Typo. Fixes panic at boot in xen domU.
+    
+    Fixes regression introduced in fb412a178502dc498430723b082a932f797e4763
+
+diff --git a/drivers/xen/events.c b/drivers/xen/events.c
+index 14ed358..6830a4d 100644
+--- a/drivers/xen/events.c
++++ b/drivers/xen/events.c
+@@ -935,7 +935,7 @@ static struct irq_chip xen_dynamic_chip __read_mostly = {
+ 	.retrigger	= retrigger_dynirq,
+ };
+ 
+-static struct irq_chip en_percpu_chip __read_mostly = {
++static struct irq_chip xen_percpu_chip __read_mostly = {
+ 	.name		= "xen-percpu",
+ 
+ 	.disable	= disable_dynirq,
