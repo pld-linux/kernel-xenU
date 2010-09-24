@@ -678,6 +678,7 @@ fi
 %exclude %{_kernelsrcdir}/scripts/*.sh
 %{_kernelsrcdir}/sound
 %{_kernelsrcdir}/security
+%{_kernelsrcdir}/tools
 %{_kernelsrcdir}/usr
 %{_kernelsrcdir}/virt
 %{_kernelsrcdir}/COPYING
