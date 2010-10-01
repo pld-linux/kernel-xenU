@@ -14,8 +14,8 @@
 %{?debug:%define with_verbose 1}
 
 %define		_basever		2.6.32
-%define		_postver		.22
-%define		_rel			3
+%define		_postver		.24
+%define		_rel			1
 
 %define		_enable_debug_packages			0
 
@@ -42,7 +42,7 @@ Source0:	http://www.kernel.org/pub/linux/kernel/v2.6/linux-%{_basever}.tar.bz2
 # Source0-md5:	260551284ac224c3a43c4adac7df4879
 %if "%{_postver}" != "%{nil}"
 Source1:	http://www.kernel.org/pub/linux/kernel/v2.6/patch-%{version}.bz2
-# Source1-md5:	da1431a1d659298c6bd11714416c840f
+# Source1-md5:	e3346e3b4b92f048b8ecded829f45cdf
 %endif
 
 Source2:	kernel-xenU-autoconf.h
@@ -51,7 +51,6 @@ Source4:	kernel-xenU-module-build.pl
 
 Source10:	kernel-xenU-x86_64.config
 
-Patch0:		%{name}-fix-panic-at-boot.patch
 Patch1:		linux-2.6-vs2.3.patch
 
 URL:		http://www.kernel.org/
@@ -281,8 +280,6 @@ Pakiet zawiera dokumentację do jądra Linuksa pochodzącą z katalogu
 %if "%{_postver}" != "%{nil}"
 %{__bzip2} -dc %{SOURCE1} | patch -p1 -s
 %endif
-
-%patch0 -p1
 
 %if %{with vserver}
 %patch1 -p1
