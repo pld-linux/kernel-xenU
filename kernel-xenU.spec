@@ -134,9 +134,9 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %endif
 
 %description
-This package contains the Linux kernel that is used to boot and run
-your system. It contains few device drivers for specific hardware.
-Most hardware is instead supported by modules loaded after booting.
+This package contains the Linux kernel that is used to boot and run your system
+inside Xen domU. It contains no hardware device drivers. Instead it contains
+drivers for virtualized devices provided by Xen.
 
 %description -l de.UTF-8
 Das Kernel-Paket enthält den Linux-Kernel (vmlinuz), den Kern des
@@ -151,9 +151,9 @@ fonctions basiques d'un système d'exploitation: allocation mémoire,
 allocation de process, entrée/sortie de peripheriques, etc.
 
 %description -l pl.UTF-8
-Pakiet zawiera jądro Linuksa niezbędne do prawidłowego działania
-Twojego komputera. Zawiera w sobie sterowniki do sprzętu znajdującego
-się w komputerze, takiego jak sterowniki dysków itp.
+Pakiet zawiera jądro Linuksa z obsługą Xen domU. To jądro nie zawiera żadnych
+sterowników fizycznych urządzeń. Zamiast tego zawiera sterowniki
+wirtualizowanych urządzeń dostarczanych przez Xen.
 
 %package vmlinux
 Summary:	vmlinux - uncompressed kernel image
