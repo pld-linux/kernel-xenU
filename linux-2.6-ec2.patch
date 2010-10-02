@@ -1,0 +1,10 @@
+--- linux-2.6.35/arch/x86/xen/enlighten.c~	2010-10-01 04:50:58.809997254 -0600
++++ linux-2.6.35/arch/x86/xen/enlighten.c	2010-10-02 08:46:42.118396547 -0600
+@@ -776,6 +776,7 @@
+ {
+ 	cr4 &= ~X86_CR4_PGE;
+ 	cr4 &= ~X86_CR4_PSE;
++	cr4 &= ~X86_CR4_OSXSAVE;
+ 
+ 	native_write_cr4(cr4);
+ }
