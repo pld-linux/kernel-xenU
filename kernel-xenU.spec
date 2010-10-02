@@ -3,11 +3,13 @@
 # - ostrzezenie: Znaleziono zainstalowane (ale niespakietowane) pliki:
 #   /usr/src/linux-2.6.31-xenU/tools/perf/*
 # - update vserver patch. It does not applies since 2.6.32.11
+# - Fix with_ec2 option to specify processor type and hotplug_cpu in kernel config
 #
 # Conditional build:
 %bcond_without	source		# don't build kernel-xenU-source package
 %bcond_with	verbose		# verbose build (V=1)
 %bcond_without	vserver		# enable vserver
+%bcond_with	ec2				# build with patches necessary for use on EC2
 
 %{?debug:%define with_verbose 1}
 
@@ -17,7 +19,7 @@
 
 %define		_enable_debug_packages			0
 
-%define		alt_kernel	xenU%{!?with_vserver:novserver}
+%define		alt_kernel	xenU%{!?with_vserver:novserver}%{?with_ec2:ec2}
 
 # kernel release (used in filesystem and eventually in uname -r)
 # modules will be looked from /lib/modules/%{kernel_release}
@@ -51,6 +53,7 @@ Source10:	kernel-xenU-x86_64.config
 Source11:	kernel-xenU-x86.config
 
 Patch1:		linux-2.6-vs2.3.patch
+Patch2:		linux-2.6-ec2.patch
 
 URL:		http://www.kernel.org/
 BuildRequires:	/sbin/depmod
@@ -272,6 +275,9 @@ Pakiet zawiera dokumentację do jądra Linuksa pochodzącą z katalogu
 
 %if %{with vserver}
 %patch1 -p1
+%endif
+%if %{with ec2}
+%patch2 -p1
 %endif
 
 # Fix EXTRAVERSION in main Makefile
