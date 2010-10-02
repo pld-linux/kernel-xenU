@@ -133,14 +133,10 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 	%define	DepMod /sbin/depmod
 %endif
 
-%define Features %(echo "%{__features}" | sed '/^$/d')
-
 %description
 This package contains the Linux kernel that is used to boot and run
 your system. It contains few device drivers for specific hardware.
 Most hardware is instead supported by modules loaded after booting.
-
-%{Features}
 
 %description -l de.UTF-8
 Das Kernel-Paket enthält den Linux-Kernel (vmlinuz), den Kern des
@@ -148,22 +144,16 @@ Linux-Betriebssystems. Der Kernel ist für grundliegende
 Systemfunktionen verantwortlich: Speicherreservierung,
 Prozeß-Management, Geräte Ein- und Ausgaben, usw.
 
-%{Features}
-
 %description -l fr.UTF-8
 Le package kernel contient le kernel linux (vmlinuz), la partie
 centrale d'un système d'exploitation Linux. Le noyau traite les
 fonctions basiques d'un système d'exploitation: allocation mémoire,
 allocation de process, entrée/sortie de peripheriques, etc.
 
-%{Features}
-
 %description -l pl.UTF-8
 Pakiet zawiera jądro Linuksa niezbędne do prawidłowego działania
 Twojego komputera. Zawiera w sobie sterowniki do sprzętu znajdującego
 się w komputerze, takiego jak sterowniki dysków itp.
-
-%{Features}
 
 %package vmlinux
 Summary:	vmlinux - uncompressed kernel image
