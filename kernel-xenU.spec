@@ -66,11 +66,9 @@ BuildRequires:	rpm-build >= 4.4.9-56
 BuildRequires:	rpmbuild(macros) >= 1.217
 Autoreqprov:	no
 Requires(post):	coreutils
-Requires(post):	geninitrd >= 2.57
 Requires(post):	module-init-tools >= 0.9.9
 Requires:	/sbin/depmod
 Requires:	coreutils
-Requires:	geninitrd >= 2.57
 Requires:	module-init-tools >= 0.9.9
 Obsoletes:	kernel%{_alt_kernel}-isdn-mISDN
 Obsoletes:	kernel-misc-acer_acpi
@@ -531,24 +529,6 @@ ln -sf System.map-%{kernel_release} /boot/System.map-%{alt_kernel}
 
 %depmod %{kernel_release}
 
-/sbin/geninitrd -f --initrdfs=rom %{initrd_dir}/initrd-%{kernel_release}.gz %{kernel_release}
-mv -f %{initrd_dir}/initrd-%{alt_kernel} %{initrd_dir}/initrd-%{alt_kernel}.old 2> /dev/null > /dev/null
-ln -sf initrd-%{kernel_release}.gz %{initrd_dir}/initrd-%{alt_kernel}
-
-if [ -x /sbin/new-kernel-pkg ]; then
-	if [ -f /etc/pld-release ]; then
-		title=$(sed 's/^[0-9.]\+ //' < /etc/pld-release)
-	else
-		title='PLD Linux'
-	fi
-
-	title="$title %{alt_kernel}"
-
-	/sbin/new-kernel-pkg --initrdfile=%{initrd_dir}/initrd-%{kernel_release}.gz --install %{kernel_release} --banner "$title"
-elif [ -x /sbin/rc-boot ]; then
-	/sbin/rc-boot 1>&2 || :
-fi
-
 %post vmlinux
 mv -f /boot/vmlinux-%{alt_kernel} /boot/vmlinux-%{alt_kernel}.old 2> /dev/null > /dev/null
 ln -sf vmlinux-%{kernel_release} /boot/vmlinux-%{alt_kernel}
@@ -578,7 +558,6 @@ fi
 %defattr(644,root,root,755)
 /boot/vmlinuz-%{kernel_release}
 /boot/System.map-%{kernel_release}
-%ghost %{initrd_dir}/initrd-%{kernel_release}.gz
 %dir /lib/modules/%{kernel_release}
 %dir /lib/modules/%{kernel_release}/kernel
 /lib/modules/%{kernel_release}/kernel/arch
