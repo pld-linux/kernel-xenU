@@ -116,8 +116,6 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_noautostrip	.*%{_kernelsrcdir}/.*
 %define		_noautochrpath	.*%{_kernelsrcdir}/.*
 
-%define		initrd_dir	/boot
-
 %define		_kernelsrcdir	/usr/src/linux-%{version}-%{alt_kernel}
 
 %if "%{_target_base_arch}" != "%{_arch}"
@@ -502,9 +500,6 @@ install %{SOURCE3} $RPM_BUILD_ROOT%{_kernelsrcdir}/include/linux/config.h
 
 # collect module-build files and directories
 perl %{SOURCE4} %{_kernelsrcdir} $KERNEL_BUILD_DIR
-
-# ghosted initrd
-touch $RPM_BUILD_ROOT%{initrd_dir}/initrd-%{kernel_release}.gz
 
 # rpm obeys filelinkto checks for ghosted symlinks, convert to files
 rm -f $RPM_BUILD_ROOT/lib/modules/%{kernel_release}/{build,source}
