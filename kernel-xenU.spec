@@ -270,10 +270,10 @@ Pakiet zawiera dokumentację do jądra Linuksa pochodzącą z katalogu
 %endif
 
 %if %{with vserver}
-%patch1 -p1
+%patch -P1 -p1
 %endif
 %if %{with ec2}
-%patch2 -p1
+%patch -P2 -p1
 %endif
 
 # Fix EXTRAVERSION in main Makefile
